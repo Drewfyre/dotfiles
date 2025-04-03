@@ -1,0 +1,34 @@
+local M = {
+	{
+		"folke/tokyonight.nvim",
+		lazy = false, -- make sure we load this during startup if it is your main colorscheme
+		priority = 1000, -- make sure to load this before all the other start plugins
+		config = function()
+			-- load the colorscheme here
+			vim.cmd([[colorscheme tokyonight]])
+		end,
+	},
+	{ "nvim-tree/nvim-web-devicons", lazy = true },
+	{
+		"williamboman/mason.nvim",
+		config = function()
+			require("mason").setup({
+				ui = {
+					icons = {
+						package_installed = "✓",
+						package_pending = "➜",
+						package_uninstalled = "✗",
+					},
+				},
+				registries = {
+					"github:mason-org/mason-registry",
+					"github:Crashdummyy/mason-registry",
+				},
+			})
+		end,
+	},
+
+	{ "chomosuke/term-edit.nvim", opts = { prompt_end = "➜" }, event = "TermOpen" },
+}
+
+return M
