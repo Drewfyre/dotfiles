@@ -73,15 +73,32 @@ return {
 			blink_ok and blink_cmp.get_lsp_capabilities() or {}
 		)
 
-		require("mason-lspconfig").setup_handlers({
-			function(server)
-				local config = vim.tbl_deep_extend("error", {
-					capabilities = capabilities,
-				}, require("plugins.lspconfig.settings")[server] or {})
-
-				require("lspconfig")[server].setup(config)
-			end,
+		require("mason").setup()
+		require("mason-lspconfig").setup({
+			automatic_enable = false,
 		})
+
+		local installed_servers = require("mason-lspconfig").get_installed_servers()
+
+		for _, server in ipairs(installed_servers) do
+			local server_config = vim.tbl_deep_extend("force", {
+				capabilities = capabilities,
+			}, require("plugins.lspconfig.settings")[server] or {})
+
+			vim.lsp.config(server, server_config)
+			vim.lsp.enable(server)
+		end
+
+		-- require("mason-lspconfig").setup_handlers({
+		-- 	function(server)
+		-- 		local config = vim.tbl_deep_extend("error", {
+		-- 			capabilities = capabilities,
+		-- 		}, require("plugins.lspconfig.settings")[server] or {})
+		--
+		-- 		vim.lsp.config(server, config)
+		-- 		vim.lsp.enable(server)
+		-- 	end,
+		-- })
 	end,
 	event = { "BufReadPre", "BufNewFile" },
 	dependencies = {
@@ -101,8 +118,8 @@ return {
 			},
 		},
 		{ "b0o/schemastore.nvim" },
-		{ "williamboman/mason.nvim", config = true, cmd = "Mason", dependencies = { "roslyn.nvim" } },
-		{ "williamboman/mason-lspconfig.nvim", config = true, cmd = { "LspInstall", "LspUninstall" } },
+		{ "mason-org/mason.nvim", config = true, cmd = "Mason", dependencies = { "roslyn.nvim" } },
+		{ "mason-org/mason-lspconfig.nvim", config = true, cmd = { "LspInstall", "LspUninstall" } },
 		{ "onsails/lspkind.nvim" },
 	},
 }

@@ -27,7 +27,7 @@ vim.opt.fillchars:append("diff:╱")
 vim.opt.formatoptions:append("r")
 vim.opt.laststatus = 3
 
-vim.opt.wrap = false
+vim.opt.wrap = true
 vim.opt.title = true
 vim.opt.titlestring = "%F"
 vim.opt.exrc = true
