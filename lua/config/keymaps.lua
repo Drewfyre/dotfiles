@@ -4,6 +4,7 @@ vim.g.maplocalleader = "\\"
 
 ---------- GENERAL MAPPINGS ----------
 
+vim.keymap.set("n", "<leader>e", ":Oil<CR>", { desc = "Open oil" })
 vim.keymap.set("n", "<leader>w", ":wa<CR>", { desc = "Save files" })
 vim.keymap.set("n", "<C-t>", ":tabedit<CR>", { desc = "Create new tab" })
 vim.keymap.set("n", "<Tab>", "gt", { desc = "Next tab" })
@@ -37,8 +38,9 @@ vim.keymap.set("n", "<leader>gh", ":help <C-r><C-w><CR>", { desc = "Search in he
 vim.keymap.set("x", "<", "<gv", { desc = "Keep visual mode on dedent" })
 vim.keymap.set("x", ">", ">gv", { desc = "Keep visual mode on indent" })
 
-vim.keymap.set("n", "<A-j>", ":m.+1<CR>==", { desc = "Move current line down" })
+-- These don't work when using GlazeWM
 vim.keymap.set("x", "<A-j>", ":m '>+1<CR>gv=gv", { desc = "Move current line down" })
+vim.keymap.set("n", "<A-j>", ":m.+1<CR>==", { desc = "Move current line down" })
 vim.keymap.set("i", "<A-j>", "<Esc>:m .+1<CR>==gi", { desc = "Move current line down" })
 
 vim.keymap.set("n", "<A-k>", ":m.-2<CR>==", { desc = "Move current line up" })
@@ -63,49 +65,49 @@ vim.keymap.set("n", "<leader>bd", ":bd<CR>", { desc = "Delete buffer" })
 vim.keymap.set("n", "<leader>@", "<cmd>lcd %:p:h<CR><cmd>pwd<CR>", { desc = "cd to directory of open buffer" })
 
 vim.keymap.set("n", "<leader>tm", function()
-	vim.opt.signcolumn = vim.o.mouse == "nvi" and "no" or "auto"
-	vim.opt.mouse = vim.o.mouse == "nvi" and "" or "nvi"
-	vim.opt.number = not vim.o.number
-	vim.opt.relativenumber = not vim.o.relativenumber
+    vim.opt.signcolumn = vim.o.mouse == "nvi" and "no" or "auto"
+    vim.opt.mouse = vim.o.mouse == "nvi" and "" or "nvi"
+    vim.opt.number = not vim.o.number
+    vim.opt.relativenumber = not vim.o.relativenumber
 end, {
-	desc = "Toggle mouse, number and signcolumn",
+    desc = "Toggle mouse, number and signcolumn",
 })
 
 vim.keymap.set("n", "<leader>tf", function()
-	vim.b.disable_formatting = not vim.b.disable_formatting
-	local res = vim.b.disable_formatting and "Disabled" or "Enabled"
-	vim.notify(string.format("%s autoformat on save", res))
+    vim.b.disable_formatting = not vim.b.disable_formatting
+    local res = vim.b.disable_formatting and "Disabled" or "Enabled"
+    vim.notify(string.format("%s autoformat on save", res))
 end, { desc = "Format: Toggle format on save" })
 
 vim.keymap.set("n", "<leader>m", function()
-	if vim.t.maximized then
-		vim.t.maximized = false
+    if vim.t.maximized then
+        vim.t.maximized = false
 
-		vim.cmd.tabclose()
-	elseif vim.fn.winnr("$") ~= 1 then
-		vim.cmd.split({ mods = { tab = 1 } })
-		vim.t.maximized = true
-	end
+        vim.cmd.tabclose()
+    elseif vim.fn.winnr("$") ~= 1 then
+        vim.cmd.split({ mods = { tab = 1 } })
+        vim.t.maximized = true
+    end
 end, { desc = "Maximize current split" })
 
 ---------- ABBREVIATIONS ----------
 
 vim.keymap.set("ca", "!!", "<C-r>:") -- Repeat last command
-vim.keymap.set("ca", "Q", "q") -- Quit with Q
-vim.keymap.set("ca", "W", "w") -- Write with W
-vim.keymap.set("ca", "WQ", "wq") -- Write and quit with WQ
+vim.keymap.set("ca", "Q", "q")       -- Quit with Q
+vim.keymap.set("ca", "W", "w")       -- Write with W
+vim.keymap.set("ca", "WQ", "wq")     -- Write and quit with WQ
 
-vim.keymap.set("ca", "Wq", "wq") -- Write and quit with Wq
+vim.keymap.set("ca", "Wq", "wq")     -- Write and quit with Wq
 
-vim.keymap.set("ca", "Wqa", "wqa") -- Write and quit all with Wqa
-vim.keymap.set("ca", "WQa", "wqa") -- Write and quit all with WQa
+vim.keymap.set("ca", "Wqa", "wqa")   -- Write and quit all with Wqa
+vim.keymap.set("ca", "WQa", "wqa")   -- Write and quit all with WQa
 
-vim.keymap.set("ca", "WQA", "wqa") -- Write and quit all with WQA
-vim.keymap.set("ca", "Wa", "wa") -- Write all with Wa
-vim.keymap.set("ca", "WA", "wa") -- Write all with WA
-vim.keymap.set("ca", "Qa", "qa") -- Quit all with Qa
-vim.keymap.set("ca", "QA", "qa") -- Quit all with QA
-vim.keymap.set("ca", "E", "e") -- Edit file with E
+vim.keymap.set("ca", "WQA", "wqa")   -- Write and quit all with WQA
+vim.keymap.set("ca", "Wa", "wa")     -- Write all with Wa
+vim.keymap.set("ca", "WA", "wa")     -- Write all with WA
+vim.keymap.set("ca", "Qa", "qa")     -- Quit all with Qa
+vim.keymap.set("ca", "QA", "qa")     -- Quit all with QA
+vim.keymap.set("ca", "E", "e")       -- Edit file with E
 vim.keymap.set("ca", "TERM", "term")
 vim.keymap.set("ca", "TERm", "term")
 vim.keymap.set("ca", "TErm", "term")
