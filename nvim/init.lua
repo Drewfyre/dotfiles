@@ -1,0 +1,7 @@
+require("config.globals")
+require("config.keymaps")
+require("config.options")
+require("config.lazy")
+require("config.commands")
+
+require("oil").setup()
