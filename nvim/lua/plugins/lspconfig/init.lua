@@ -58,7 +58,12 @@ return {
 		local capabilities = vim.tbl_deep_extend(
 			"force",
 			vim.lsp.protocol.make_client_capabilities(),
-			blink_ok and blink_cmp.get_lsp_capabilities() or {}
+			blink_ok and blink_cmp.get_lsp_capabilities() or {},
+			{
+				workspace = {
+					didChangeWatchedFiles = { dynamicRegistration = true },
+				},
+			}
 		)
 
 		require("mason").setup()
@@ -78,6 +83,7 @@ return {
 
 		require("roslyn").setup({
 			capabilities = capabilities,
+			filewatching = "off",
 			choose_target = function(target)
 				return vim.iter(target):find(function(item)
 					if string.match(item, "RAS.slnx") then

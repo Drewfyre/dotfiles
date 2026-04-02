@@ -27,7 +27,8 @@ local M = {
 					dotnet_enable_references_code_lens = true,
 				},
 				["csharp|background_analysis"] = {
-					dotnet_analyzer_diagnostics_scope = "fullSolution",
+					dotnet_analyzer_diagnostics_scope = "openFiles", --- "fullSolution"
+					dotnet_compiler_diagnostics_scope = "openFiles",
 				},
 			},
 		},
