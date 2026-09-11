@@ -6,6 +6,9 @@ local M = {
 	---@type RoslynNvimConfig
 	opts = {
 		config = {
+			filetypes = {
+				"cs",
+			},
 			settings = {
 				["csharp|inlay_hints"] = {
 					csharp_enable_inlay_hints_for_implicit_object_creation = true,
@@ -27,8 +30,8 @@ local M = {
 					dotnet_enable_references_code_lens = true,
 				},
 				["csharp|background_analysis"] = {
-					dotnet_analyzer_diagnostics_scope = "openFiles", --- "fullSolution"
-					dotnet_compiler_diagnostics_scope = "openFiles",
+					dotnet_analyzer_diagnostics_scope = "fullSolution", --- "fullSolution"
+					dotnet_compiler_diagnostics_scope = "fullSolution",
 				},
 			},
 		},

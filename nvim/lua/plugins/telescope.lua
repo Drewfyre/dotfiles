@@ -1,25 +1,51 @@
--- plugins/telescope.lua:
 return {
 	"nvim-telescope/telescope.nvim",
-	--tag = "0.1.8",
 	config = function()
-		require("telescope").setup({
+		local telescope = require("telescope")
+		local code_action = require("tiny-code-action")
+		telescope.setup({
+			defaults = {
+				path_display = { "truncate", "filename_first" },
+			},
 			extensions = {
 				["ui-select"] = {
 					require("telescope.themes").get_dropdown({}),
 				},
+				fzf = {
+					fuzzy = true,
+					override_generic_sorter = true,
+					override_file_sorter = true,
+					case_mode = "smart_case",
+				},
+			},
+			pickers = {
+				find_files = {
+					theme = "dropdown",
+				},
 			},
 		})
-
-		require("telescope").load_extension("ui-select")
+		telescope.load_extension("fzf")
+		telescope.load_extension("ui-select")
+		code_action.setup({
+			picker = {
+				"telescope",
+				opts = {
+					layout_strategy = "horizontal",
+				},
+			},
+		})
 	end,
-	dependencies = { "nvim-lua/plenary.nvim", "nvim-telescope/telescope-ui-select.nvim" },
+	dependencies = {
+		"nvim-lua/plenary.nvim",
+		"nvim-telescope/telescope-ui-select.nvim",
+		"nvim-telescope/telescope-fzf-native.nvim",
+		"rachartier/tiny-code-action.nvim",
+	},
 	keys = {
 		{ "<leader>/", "<cmd>Telescope live_grep<cr>", desc = "Grep (Root Dir)" },
 		{ "<leader><space>", "<cmd>Telescope find_files<cr>", desc = "Find Files (Root Dir)" },
 		{
 			"<leader>fb",
-
 			"<cmd>Telescope buffers sort_mru=true sort_lastused=true ignore_current_buffer=true<cr>",
 			desc = "Buffers",
 		},

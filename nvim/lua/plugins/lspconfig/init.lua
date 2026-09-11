@@ -7,7 +7,15 @@ end
 vim.api.nvim_create_autocmd("LspAttach", {
 	group = vim.api.nvim_create_augroup("DefaultLspAttach", { clear = true }),
 
-	callback = function()
+	callback = function(ev)
+		local client = vim.lsp.get_client_by_id(ev.data.client_id)
+		if client then
+			if client:supports_method("workspace/diagnostic", ev.buf) then
+				vim.lsp.buf.workspace_diagnostics({ client_id = client.id })
+			else
+				require("workspace-diagnostics").populate_workspace_diagnostics(client, ev.buf)
+			end
+		end
 		keymap("i", "<C-s>", function()
 			vim.lsp.buf.signature_help({ border = CUSTOM_BORDER })
 		end, { desc = "Hover" })
@@ -21,20 +29,37 @@ vim.api.nvim_create_autocmd("LspAttach", {
 		end, { desc = "Toggle inlay hints" })
 
 		keymap("n", "<leader>ca", function()
-			vim.lsp.buf.code_action()
+			require("tiny-code-action").code_action({
+				filter = function(action)
+					return not action.disabled
+				end,
+			})
 		end, { desc = "Code action" })
 
 		keymap("v", "<leader>ca", function()
-			vim.lsp.buf.code_action()
+			require("tiny-code-action").code_action({
+				filter = function(action)
+					return not action.disabled
+				end,
+			})
 		end, { desc = "Code action" })
 
 		keymap("n", "<leader>r", function()
 			vim.lsp.buf.rename()
 		end, { desc = "Rename" })
+
+		keymap("n", "<leader>d", function()
+			vim.diagnostic.open_float({
+				border = "rounded",
+			})
+		end, { desc = "Show diagnostics float" })
 	end,
 })
 vim.diagnostic.config({
-	virtual_text = { spacing = 4, prefix = "●" },
+	underline = true,
+	update_in_insert = false,
+	severity_sort = true,
+	virtual_text = false,
 	---@diagnostic disable-next-line: assign-type-mismatch
 	float = { border = CUSTOM_BORDER, source = "if_many" },
 	signs = {
@@ -47,6 +72,15 @@ vim.diagnostic.config({
 			[vim.diagnostic.severity.ERROR] = "DiagnosticSignError",
 			[vim.diagnostic.severity.WARN] = "DiagnosticSignWarn",
 			[vim.diagnostic.severity.INFO] = "DiagnosticSignHint",
+		},
+	},
+})
+require("tiny-inline-diagnostic").setup({
+	preset = "simple",
+	transparent_cursorline = false,
+	options = {
+		multilines = {
+			enabled = true,
 		},
 	},
 })
@@ -120,6 +154,8 @@ return {
 			},
 		},
 		{ "saghen/blink.cmp" },
+		{ "artemave/workspace-diagnostics.nvim" },
+		{ "rachartier/tiny-inline-diagnostic.nvim" },
 		{ "b0o/schemastore.nvim" },
 		{
 			"mason-org/mason.nvim",

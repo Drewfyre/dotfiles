@@ -1,5 +1,6 @@
 return {
 	"saghen/blink.cmp",
+	version = "v1.*",
 	event = "InsertEnter",
 	build = "cargo +nightly build --release",
 	dependencies = {
@@ -75,8 +76,7 @@ return {
 			},
 
 			cmdline = { enabled = false },
-			snippets = { preset = "luasnip" },
-			sources = { default = { "lsp", "path", "snippets", "buffer" } },
+			sources = { default = { "lsp", "path", "buffer" } },
 		}
 	end,
 }

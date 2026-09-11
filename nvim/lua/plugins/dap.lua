@@ -17,17 +17,69 @@ return {
 			dap.adapters.netcoredbg = netcoredbg_adapter
 			dap.adapters.coreclr = netcoredbg_adapter
 
+			-- Cache the DLL path so build_dll_path() (which may show a picker) is only called once per session.
+			local _dll_path_cache = nil
+			local function get_dll_path()
+				if not _dll_path_cache then
+					_dll_path_cache = require("dap-dll-autopicker").build_dll_path()
+				end
+				return _dll_path_cache
+			end
+
+			-- Clear cache before each new launch so a fresh pick is made next time.
+			dap.listeners.before.event_initialized["clear_dll_cache"] = function()
+				_dll_path_cache = nil
+			end
+
+			-- Reads applicationUrl from the project's launchSettings.json so Kestrel
+			-- binds to the correct ports when launched via DAP (netcoredbg does not
+			-- read launchSettings.json the way `dotnet run` does).
+			local function get_aspnetcore_urls(dll_path)
+				-- dll_path: .../bin/Debug/net*/Project.dll  →  project root is 4 levels up
+				local project_dir = vim.fn.fnamemodify(dll_path, ":h:h:h:h")
+				local launch_settings_path = project_dir .. "/Properties/launchSettings.json"
+
+				local f = io.open(launch_settings_path, "r")
+				if not f then
+					return nil
+				end
+
+				local content = f:read("*all")
+				f:close()
+
+				local ok, parsed = pcall(vim.fn.json_decode, content)
+				if not ok or not parsed.profiles then
+					return nil
+				end
+
+				for _, profile in pairs(parsed.profiles) do
+					if profile.applicationUrl then
+						return profile.applicationUrl
+					end
+				end
+
+				return nil
+			end
+
 			dap.configurations.cs = {
 				{
 					type = "coreclr",
 					name = "Launch directly from nvim",
 					request = "launch",
 					program = function()
-						return require("dap-dll-autopicker").build_dll_path()
+						return get_dll_path()
 					end,
-					env = {
-						ASPNETCORE_ENVIRONMENT = "Development",
-					},
+					cwd = function()
+						return vim.fn.fnamemodify(get_dll_path(), ":h")
+					end,
+					env = function()
+						local urls = get_aspnetcore_urls(get_dll_path())
+						local env = { ASPNETCORE_ENVIRONMENT = "Development" }
+						if urls then
+							env.ASPNETCORE_URLS = urls
+						end
+						return env
+					end,
 				},
 			}
 
@@ -101,18 +153,21 @@ return {
 					max_value_lines = 200,
 				},
 
-				-- Only one layout: just the "scopes" (variables) list at the bottom
 				layouts = {
 					{
-
 						elements = {
-							{ id = "scopes", size = 0.5 }, -- 100% of this panel is scopes
-							{ id = "stacks", size = 0.5 }, -- 100% of this panel is scopes
+							{ id = "scopes", size = 0.5 },
+							{ id = "stacks", size = 0.5 },
 						},
-
-						size = 15, -- height in lines (adjust to taste)
-
-						position = "bottom", -- "left", "right", "top", "bottom"
+						size = 15,
+						position = "bottom",
+					},
+					{
+						elements = {
+							{ id = "repl", size = 1.0 },
+						},
+						size = 120, -- width in columns
+						position = "right",
 					},
 				},
 			})

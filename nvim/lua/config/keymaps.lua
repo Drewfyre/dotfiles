@@ -16,7 +16,6 @@ vim.keymap.set("n", "gb", "<C-t>", { desc = "Go back in tag-stack" })
 vim.keymap.set("n", "gp", "`[v`]", { desc = "Reselect pasted text" })
 
 vim.keymap.set({ "n", "x" }, "x", '"_x')
-vim.keymap.set({ "n", "x" }, "<leader>d", '"_d', { desc = "Delete into black hole register" })
 vim.keymap.set({ "n", "x" }, "<leader>c", '"_c', { desc = "Change into black hole register" })
 vim.keymap.set("x", "<leader>p", '"_dP', { desc = "Delete into black hole register on visual paste" })
 

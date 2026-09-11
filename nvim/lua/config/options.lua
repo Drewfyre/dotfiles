@@ -4,7 +4,7 @@ vim.opt.completeitemalign = { "kind", "abbr", "menu" }
 vim.opt.splitbelow = true
 vim.opt.splitright = true
 vim.opt.clipboard = "unnamedplus"
-vim.opt.updatetime = 100
+vim.opt.updatetime = 300
 vim.opt.tabstop = 4
 vim.opt.expandtab = true
 vim.opt.softtabstop = 4
@@ -18,6 +18,7 @@ vim.opt.foldlevelstart = 20
 vim.opt.showmode = false
 vim.opt.ignorecase = true
 vim.opt.smartcase = true
+vim.opt.hlsearch = false
 vim.opt.undofile = true
 
 vim.opt.cindent = true
