@@ -20,6 +20,8 @@ vim.opt.ignorecase = true
 vim.opt.smartcase = true
 vim.opt.hlsearch = false
 vim.opt.undofile = true
+vim.opt.winborder = "rounded"
+vim.opt.showmode = false
 
 vim.opt.cindent = true
 vim.opt.cinkeys:remove("0#")

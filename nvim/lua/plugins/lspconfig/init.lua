@@ -29,26 +29,18 @@ vim.api.nvim_create_autocmd("LspAttach", {
 		end, { desc = "Toggle inlay hints" })
 
 		keymap("n", "<leader>ca", function()
-			require("tiny-code-action").code_action({
-				filter = function(action)
-					return not action.disabled
-				end,
-			})
+			vim.lsp.buf.code_actions()
 		end, { desc = "Code action" })
 
 		keymap("v", "<leader>ca", function()
-			require("tiny-code-action").code_action({
-				filter = function(action)
-					return not action.disabled
-				end,
-			})
+			vim.lsp.buf.code_actions()
 		end, { desc = "Code action" })
 
 		keymap("n", "<leader>r", function()
 			vim.lsp.buf.rename()
 		end, { desc = "Rename" })
 
-		keymap("n", "<leader>d", function()
+		keymap("n", "<leader>wd", function()
 			vim.diagnostic.open_float({
 				border = "rounded",
 			})

@@ -1,15 +1,25 @@
-vim.api.nvim_create_autocmd({ "InsertLeave" }, {
-	pattern = "*",
-	callback = function()
-		local clients = vim.lsp.get_clients({ name = "roslyn" })
-		if not clients or #clients == 0 then
+vim.api.nvim_create_autocmd("InsertLeave", {
+	callback = function(args)
+		local bufnr = args.buf
+
+		-- Only run for buffers that have an LSP client attached
+		local clients = vim.lsp.get_clients({
+			bufnr = bufnr,
+			name = "roslyn",
+		})
+
+		if #clients == 0 then
 			return
 		end
 
-		local buffers = vim.lsp.get_buffers_by_client_id(clients[1].id)
-		for _, buf in ipairs(buffers) do
-			vim.lsp.util._refresh("textDocument/diagnostic", { bufnr = buf })
+		for _, client in ipairs(clients) do
+			client:request("textDocument/diagnostic", {
+				textDocument = vim.lsp.util.make_text_document_params(bufnr),
+			}, function(err, result)
+				if err then
+					vim.notify("Roslyn diagnostic refresh failed: " .. err.message, vim.log.levels.WARN)
+				end
+			end, bufnr)
 		end
-		print("Client refresh ")
 	end,
 })
