@@ -9,12 +9,8 @@ vim.api.nvim_create_autocmd("LspAttach", {
 
 	callback = function(ev)
 		local client = vim.lsp.get_client_by_id(ev.data.client_id)
-		if client then
-			if client:supports_method("workspace/diagnostic", ev.buf) then
-				vim.lsp.buf.workspace_diagnostics({ client_id = client.id })
-			else
-				require("workspace-diagnostics").populate_workspace_diagnostics(client, ev.buf)
-			end
+		if not client then
+			return
 		end
 		keymap("i", "<C-s>", function()
 			vim.lsp.buf.signature_help({ border = CUSTOM_BORDER })
@@ -29,11 +25,11 @@ vim.api.nvim_create_autocmd("LspAttach", {
 		end, { desc = "Toggle inlay hints" })
 
 		keymap("n", "<leader>ca", function()
-			vim.lsp.buf.code_actions()
+			vim.lsp.buf.code_action()
 		end, { desc = "Code action" })
 
 		keymap("v", "<leader>ca", function()
-			vim.lsp.buf.code_actions()
+			vim.lsp.buf.code_action()
 		end, { desc = "Code action" })
 
 		keymap("n", "<leader>r", function()
@@ -109,7 +105,7 @@ return {
 
 		require("roslyn").setup({
 			capabilities = capabilities,
-			filewatching = "off",
+			filewatching = "roslyn",
 			choose_target = function(target)
 				return vim.iter(target):find(function(item)
 					if string.match(item, "RAS.slnx") then
@@ -118,14 +114,6 @@ return {
 				end)
 			end,
 			lock_target = true,
-			on_attach = function(client, bufnr)
-				-- Force workspace initialization so you don't need to press "gh"
-				vim.defer_fn(function()
-					if client.initialized then
-						vim.lsp.buf.document_symbol()
-					end
-				end, 200)
-			end,
 		})
 	end,
 	event = { "BufReadPre", "BufNewFile" },
@@ -146,7 +134,6 @@ return {
 			},
 		},
 		{ "saghen/blink.cmp" },
-		{ "artemave/workspace-diagnostics.nvim" },
 		{ "rachartier/tiny-inline-diagnostic.nvim" },
 		{ "b0o/schemastore.nvim" },
 		{

@@ -57,7 +57,7 @@ return {
 		{ "gi", "<cmd>Telescope lsp_implementations<cr>", desc = "Lsp implementations" },
 		{ "gt", "<cmd>Telescope lsp_type_definitions<cr>", desc = "Lsp type definitions" },
 		{
-			"gt",
+			"gD",
 			"<cmd>Telescope diagnostics<cr>",
 			{ bufnr = 0 },
 			desc = "Lsp diagnostics",
